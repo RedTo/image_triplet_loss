@@ -2,6 +2,8 @@
 This repository is an implementation of following "medium" story:
 **[Image similarity using Triplet Loss](https://towardsdatascience.com/image-similarity-using-triplet-loss-3744c0f67973?source=friends_link&sk=ad2d8e0921e7cdaec1e65e6e0474df10)**
 
+[Facebook FAISS](https://github.com/facebookresearch/faiss) is used for calculating similarity
+
 ## Requirements
 - Python 3
 - Pip 3
