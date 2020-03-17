@@ -2,20 +2,19 @@ import tensorflow as tf
 from preprocessing import PreProcessing
 from model import TripletLoss
 
-flags = tf.app.flags
-FLAGS = flags.FLAGS
-flags.DEFINE_integer('batch_size', 512, 'Batch size.')
-flags.DEFINE_integer('train_iter', 2000, 'Total training iter')
-flags.DEFINE_integer('step', 50, 'Save after ... iteration')
-flags.DEFINE_float('learning_rate','0.01','Learning rate')
-flags.DEFINE_float('momentum','0.99', 'Momentum')
-flags.DEFINE_string('model', 'conv_net', 'model to run')
-flags.DEFINE_string('data_src', './data_repository/geological_similarity/', 'source of training dataset')
+
+BATCH_SIZE = 512
+TRAIN_ITER = 2000
+SAVE_STEP = 50
+LEARNING_RATE = 0.01
+MOMENTUM = 0.99
+MODEL = 'conv_net'
+DATA_SRC = '../data/small_rooms_floor_squares_128/'
 
 if __name__ == "__main__":
 
     # Setup Dataset
-    dataset = PreProcessing(FLAGS.data_src)
+    dataset = PreProcessing(DATA_SRC)
     model = TripletLoss()
     placeholder_shape = [None] + list(dataset.images_train.shape[1:])
     print("placeholder_shape", placeholder_shape)
@@ -35,8 +34,7 @@ if __name__ == "__main__":
     # Setup Optimizer
     global_step = tf.Variable(0, trainable=False)
 
-    train_step = tf.train.MomentumOptimizer(FLAGS.learning_rate, FLAGS.momentum, use_nesterov=True).minimize(loss,
-                                                                                                             global_step=global_step)
+    train_step = tf.train.MomentumOptimizer(LEARNING_RATE, MOMENTUM, use_nesterov=True).minimize(loss, global_step=global_step)
 
     # Start Training
     saver = tf.train.Saver()
@@ -52,16 +50,20 @@ if __name__ == "__main__":
         writer = tf.summary.FileWriter('train.log', sess.graph)
 
         # Train iter
-        for i in range(FLAGS.train_iter):
-            batch_anchor, batch_positive, batch_negative = next_batch(FLAGS.batch_size)
+        for i in range(TRAIN_ITER):
+            batch_anchor, batch_positive, batch_negative = next_batch(BATCH_SIZE)
 
             _, l, summary_str = sess.run([train_step, loss, merged],
-                                         feed_dict={anchor_input: batch_anchor, positive_input: batch_positive, negative_input: batch_negative})
+                                         feed_dict={
+                                         anchor_input: batch_anchor,
+                                         positive_input: batch_positive,
+                                         negative_input: batch_negative
+                                         })
 
             writer.add_summary(summary_str, i)
             print("\r#%d - Loss" % i, l)
 
-            if (i + 1) % FLAGS.step == 0:
+            if (i + 1) % SAVE_STEP == 0:
                 saver.save(sess, "model_triplet/model.ckpt")
         saver.save(sess, "model_triplet/model.ckpt")
     print('Training completed successfully.')

@@ -5,7 +5,7 @@ This repository is an implementation of following "medium" story:
 ## Requirements
 - Python 3
 - Pip 3
-- Tensorflow
+- Tensorflow (1.13.1)
 - Matplotlib
 - Requests
 
@@ -16,16 +16,10 @@ pip install -r requirements.txt
 ```
 
 ## Training
-1. Download Training Dataset by executing download_dataset.py
-```bash
-python download_dataset.py
-```
-2. To train 
 ```bash
 python train_triplets.py 
 ```
 ## Prediction
-
 Run Prediction.ipynb using Jupyter notebook to look into Prediction code.  
 ```
 Prediction.ipynb
